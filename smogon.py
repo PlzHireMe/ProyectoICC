@@ -1,6 +1,7 @@
 import pandas
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans
+import numpy as np
 
 # 1) Investigar cómo funciona la clase TfidfVectorizer y usarla en reemplazo de CountVectorizer para Generar la matriz tf-idf utilizando una cantidad de n-gramas elegida por usted (unigramas, bigramas, trigramas, etc.).
 csv = pandas.read_csv('smogon.csv')
@@ -43,6 +44,24 @@ nuevo_csv = pandas.DataFrame()
 nuevo_csv["Pokemon"] = data_Frame["Pokemon"]
 nuevo_csv["Cluster"] = data_Frame["Cluster"]
 nuevo_csv.to_csv('csv_clusters')
+
+# 7) Nombrar los grupos
+
+dictionary_caracteristicas = {
+    0: "Pokemon electricos, o hechos de un material resistente: Acero, Roca, Hielo",
+    1: "Magicos: psiquicos, siniestros y fantasmas",
+    2: "Acuaticos",
+    3: "Voladores",
+    4: "Plantas",
+    5: "Terrestres, de fuego y luchadores",
+    6: "Insectos",
+    7: "Legendarios"
+}
+
+nuevo_csv = pandas.read_csv("csv_cluster_copia")
+nuevo_csv_caracteristicas = nuevo_csv
+nuevo_csv_caracteristicas["Descripcion"] = nuevo_csv["Cluster"].map(dictionary_caracteristicas)
+nuevo_csv_caracteristicas.to_csv("Pokemon_Cluster_Descripcion")
 
 #Segunda parte:
 
