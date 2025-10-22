@@ -10,25 +10,39 @@ listaStopWords = stopWords["stopWords"].tolist()
 
 vec = TfidfVectorizer(ngram_range=(1, 2), stop_words= listaStopWords)
 x = vec.fit_transform(csv["moves"])
-km = KMeans(n_clusters=8, n_init=40)
-lista = km.fit_predict(x)
 
 # 2) Mostrar el número total de columnas que tiene su matriz tf-idf
 
 print("Mostrar el número total de columnas que tiene su matriz tf-idf: ")
-print(len(vec.vocabulary_))
+print(len(vec.get_feature_names_out()))
 
 # 3) Imprimir todos los tokens (elementos de su vocabulario)
 
-print(vec.vocabulary_)
+print("Imprimir todos los tokens (elementos de su vocabulario)")
+print(vec.get_feature_names_out())
 
-csv_parte1 = pandas.DataFrame(csv["Pokemon"])
-csv_parte1["cluster"] = lista
+# 4) Generar un DataFrame que tenga como cabecera los elementos del vocabulario.
 
-csv_parte1.sort_values(["cluster"], inplace=True)
-csv_parte1.reset_index(drop=True, inplace= True)
+data_Frame = pandas.DataFrame(x.toarray(), columns=vec.get_feature_names_out())
+data_Frame.insert(0, "Pokemon", csv["Pokemon"])
+print(data_Frame)
 
+# 5) Agrupar las filas de nuestro nuevo cluster.
 
+km = KMeans(n_clusters=8, n_init=40)
+lista = km.fit_predict(data_Frame.drop(columns=["Pokemon"]))
+data_Frame["Cluster"] = lista
+#Ordenar por Clusters
+data_Frame.sort_values(["Cluster"], inplace=True) 
+data_Frame.reset_index(drop=True, inplace= True) 
+print(data_Frame)
+
+# 6) Crear un csv, con los nombres y el cluster al que pertenecen.
+
+nuevo_csv = pandas.DataFrame()
+nuevo_csv["Pokemon"] = data_Frame["Pokemon"]
+nuevo_csv["Cluster"] = data_Frame["Cluster"]
+nuevo_csv.to_csv('csv_clusters')
 
 #Segunda parte:
 
