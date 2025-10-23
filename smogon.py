@@ -26,6 +26,7 @@ print(vec.get_feature_names_out())
 
 data_Frame = pandas.DataFrame(x.toarray(), columns=vec.get_feature_names_out())
 data_Frame.insert(0, "Pokemon", csv["Pokemon"])
+print("Generar un DataFrame que tenga como cabecera los elementos del vocabulario.")
 print(data_Frame)
 
 # 5) Agrupar las filas de nuestro nuevo cluster.
@@ -35,7 +36,8 @@ lista = km.fit_predict(data_Frame.drop(columns=["Pokemon"]))
 data_Frame["Cluster"] = lista
 #Ordenar por Clusters
 data_Frame.sort_values(["Cluster"], inplace=True) 
-data_Frame.reset_index(drop=True, inplace= True) 
+data_Frame.reset_index(drop=True, inplace= True)
+print("Agrupar las filas de nuestro nuevo cluster.")
 print(data_Frame)
 
 # 6) Crear un csv, con los nombres y el cluster al que pertenecen.
@@ -73,9 +75,9 @@ print("-----------------------------------------")
 
 nuevo_move = []
 for sentence in csv["moves"]:
+    sentence = sentence.lower()
     for tipo in tipos:
         sentence = sentence.replace(tipo, f' {tipo} ')
-    sentence = sentence.lower()
     nuevo_move.append(' '.join(sentence.split()))
 csv["moves"] = nuevo_move
 
@@ -88,12 +90,10 @@ lista = km2.fit_predict(x)
 csv_parte2 = pandas.DataFrame(csv["Pokemon"])
 csv_parte2["cluster"] = lista
 
-csv_parte3 = pandas.DataFrame()
-csv_parte3["Pokemon"] = csv_parte2["Pokemon"]
-csv_parte3["cluster"] = csv_parte2["cluster"]
-
 csv_parte2.sort_values(["cluster"], inplace=True)
 csv_parte2.reset_index(drop=True, inplace= True)
+
+print(csv_parte2)
 
 
 #Tercera Parte:
@@ -109,8 +109,18 @@ for sentence in csv["moves"]:
     frequent_moves.append(ordenado[0])
     frequent_moves2.append(ordenado[1])
 
-csv_parte3["Tipo Principal"] = frequent_moves
-csv_parte3["Tipo Secundario"] = frequent_moves2
-csv_parte3.sort_values(["cluster"], inplace=True)
-csv_parte3.reset_index(drop=True, inplace= True)
+nuevo_csv.sort_values(["Pokemon"], inplace=True) 
+nuevo_csv["Tipo Principal"] = frequent_moves
+nuevo_csv["Tipo Secundario"] = frequent_moves2
+nuevo_csv.sort_values(["Cluster"], inplace=True) 
+
+csv_parte2.sort_values(["Pokemon"], inplace=True) 
+csv_parte2["Tipo Principal"] = frequent_moves
+csv_parte2["Tipo Secundario"] = frequent_moves2
+csv_parte2.sort_values(["cluster"], inplace=True) 
+
+print(nuevo_csv)
+
+print(csv_parte2)
+
 
